@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+   xmlns="http://maven.apache.org/POM/4.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+   <modelVersion>4.0.0</modelVersion>
+   <name>DZ_SDOTXT Build Test</name>
+   <groupId>dz_builder</groupId>
+   <artifactId>sql-maven-plugin</artifactId>
+   <version>1.0</version>
+   <packaging>jar</packaging>
+   <description>Automated testing of PLSQL</description>
+   <properties>
+      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+   </properties>
+   <pluginRepositories>
+      <pluginRepository>
+         <id>croche-releases</id>
+         <url>http://croche.googlecode.com/svn/repository/releases</url>
+      </pluginRepository>
+   </pluginRepositories>
+   <build>
+      <plugins>
+         <plugin>
+           <groupId>org.codehaus.mojo</groupId>
+           <artifactId>properties-maven-plugin</artifactId>
+           <version>1.0-alpha-2</version>
+           <executions>
+             <execution>
+               <phase>initialize</phase>
+               <goals>
+                 <goal>read-project-properties</goal>
+               </goals>
+               <configuration>
+                 <files>
+                   <file>/var/lib/jenkins/sqlplus.properties</file>
+                 </files>
+               </configuration>
+             </execution>
+           </executions>
+         </plugin>
+         <plugin>
+            <groupId>com.google.code.maven-replacer-plugin</groupId>
+            <artifactId>replacer</artifactId>
+            <version>1.5.2</version>
+            <executions>
+               <execution>
+                  <id>foo1</id>
+                  <phase>process-sources</phase>
+                  <goals>
+                     <goal>replace</goal>
+                  </goals>                   
+                  <configuration>
+                     <file>tfs/Packages/DZ_SDOTXT_TEST.pks</file>
+                     <replacements>
+                        <replacement>
+                           <token>C_TFS_CHANGESET CONSTANT NUMBER := 0.0;</token>
+                           <value>C_TFS_CHANGESET CONSTANT NUMBER := ${TFS_CHANGESET};</value>
+                        </replacement>
+                        <replacement>
+                           <token>C_JENKINS_JOBNM CONSTANT VARCHAR2\(255\) := \'NULL\';</token>
+                           <value>C_JENKINS_JOBNM CONSTANT VARCHAR2(255) := '${JOB_NAME}';</value>
+                        </replacement>
+                        <replacement>
+                           <token>C_JENKINS_BUILD CONSTANT NUMBER := 0.0;</token>
+                           <value>C_JENKINS_BUILD CONSTANT NUMBER := ${BUILD_NUMBER};</value>
+                        </replacement>
+                        <replacement>
+                           <token>C_JENKINS_BLDID CONSTANT VARCHAR2\(255\) := \'NULL\';</token>
+                           <value>C_JENKINS_BLDID CONSTANT VARCHAR2(255) := '${BUILD_ID}';</value>
+                        </replacement>                  
+                     </replacements>
+                  </configuration>  
+               </execution>
+               <execution>
+                  <id>foo2</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                     <goal>replace</goal>
+                  </goals>
+                  <configuration>
+                     <file>dz_sdotxt_deploy.sql</file>
+                     <replacements>
+                        <replacement>
+                           <token>DZNAMEDZ</token>
+                           <value>SDOTXT</value>
+                        </replacement>
+                        <replacement>
+                           <token>DZBUILDIDDZ</token>
+                           <value>${BUILD_ID}</value>
+                        </replacement>
+                        <replacement>
+                           <token>DZTFSCHANGESETDZ</token>
+                           <value>${TFS_CHANGESET}</value>
+                        </replacement>
+                     </replacements>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>croche.maven</groupId>
+            <artifactId>maven-merge-file-plugin</artifactId>
+            <version>0.4</version>
+            <executions>
+               <execution>
+                  <id>concatentate_deployment</id>
+                  <phase>process-sources</phase>
+                  <goals>
+                     <goal>merge</goal>
+                  </goals>
+                  <configuration>
+                     <merges>
+                        <merge>
+                           <targetFile>dz_sdotxt_deploy.sql</targetFile>
+                           <sourceDirs>
+                              <sourceDir>/var/lib/jenkins/userContent</sourceDir>
+                              <sourceDir>tfs/Collections</sourceDir>
+                              <sourceDir>tfs/Packages</sourceDir>
+                              <sourceDir>tfs/Types</sourceDir>
+                           </sourceDirs>
+                           <nameContainsOrderings>
+                              <nameContainsOrdering>sqlplus_header.sql</nameContainsOrdering>
+                              <nameContainsOrdering>DZ_SDOTXT_LABELED.tps</nameContainsOrdering>
+                              <nameContainsOrdering>DZ_SDOTXT_LABELED.tpb</nameContainsOrdering>
+                              <nameContainsOrdering>DZ_SDOTXT_LABELED_LIST.tps</nameContainsOrdering>
+                              <nameContainsOrdering>DZ_SDOTXT_UTIL.pks</nameContainsOrdering>
+                              <nameContainsOrdering>DZ_SDOTXT_UTIL.pkb</nameContainsOrdering>
+                              <nameContainsOrdering>DZ_SDOTXT_MAIN.pks</nameContainsOrdering>
+                              <nameContainsOrdering>DZ_SDOTXT_MAIN.pkb</nameContainsOrdering>
+                              <nameContainsOrdering>DZ_SDOTXT_TEST.pks</nameContainsOrdering>
+                              <nameContainsOrdering>DZ_SDOTXT_TEST.pkb</nameContainsOrdering>
+                              <nameContainsOrdering>sqlplus_footer.sql</nameContainsOrdering>
+                           </nameContainsOrderings>
+                           <includes>
+                              <include>sqlplus_header.sql</include>
+                              <include>DZ_SDOTXT_LABELED.tps</include>
+                              <include>DZ_SDOTXT_LABELED.tpb</include>
+                              <include>DZ_SDOTXT_LABELED_LIST.tps</include>
+                              <include>DZ_SDOTXT_UTIL.pks</include>
+                              <include>DZ_SDOTXT_UTIL.pkb</include>
+                              <include>DZ_SDOTXT_MAIN.pks</include>
+                              <include>DZ_SDOTXT_MAIN.pkb</include>
+                              <include>DZ_SDOTXT_TEST.pks</include>
+                              <include>DZ_SDOTXT_TEST.pkb</include>
+                              <include>sqlplus_footer.sql</include>
+                           </includes>
+                           <separator>\n--*************************--\nPROMPT #{file.name};\n\n</separator>
+                           <encoding>UTF-8</encoding>
+                        </merge>
+                     </merges>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>sql-maven-plugin</artifactId>
+            <version>1.5</version>
+            <dependencies>
+               <dependency>
+                  <groupId>com.oracle</groupId>
+                  <artifactId>ojdbc7</artifactId>
+                  <version>12.1.1</version>
+               </dependency>
+            </dependencies>
+            <configuration>
+               <driver>oracle.jdbc.driver.OracleDriver</driver>
+               <url>jdbc:oracle:thin:@${dz.jdbc}</url>
+               <username>${dz.username}</username>
+               <password>${dz.password}</password>
+               <delimiter>/</delimiter>
+               <delimiterType>row</delimiterType>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>testing_setup</id>
+                  <phase>generate-sources</phase>
+                  <goals>
+                     <goal>execute</goal>
+                  </goals>
+                  <configuration>
+                     <sqlCommand>
+DECLARE
+   PROCEDURE dp(
+      p_sql IN VARCHAR2
+   )
+   AS
+   BEGIN
+      EXECUTE IMMEDIATE p_sql;
+   EXCEPTION
+      WHEN OTHERS
+      THEN
+         IF SQLCODE = -04043
+         THEN
+            NULL;
+         ELSE
+            RAISE;
+         END IF;
+   END dp;
+BEGIN
+   dp('DROP PACKAGE DZ_SDOTXT_TEST');
+   dp('DROP PACKAGE DZ_SDOTXT_MAIN');
+   dp('DROP PACKAGE DZ_SDOTXT_UTIL');
+   dp('DROP TYPE DZ_SDOTXT_LABELED_LIST FORCE');
+   dp('DROP TYPE DZ_SDOTXT_LABELED FORCE');
+END;
+/
+                     </sqlCommand>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>testing_adjustments</id>
+                  <phase>process-sources</phase>
+                  <goals>
+                     <goal>execute</goal>
+                  </goals>
+                  <configuration>
+                     <sqlCommand>
+DECLARE
+
+   num_changes NUMBER;
+
+   PROCEDURE find_replace(
+       p_object_name  IN  VARCHAR2
+      ,p_object_type  IN  VARCHAR2
+      ,p_find_text    IN  VARCHAR2
+      ,p_replace_text IN  VARCHAR2
+      ,p_replacements OUT NUMBER
+   )
+   AS
+      ary_text    MDSYS.SDO_STRING2_ARRAY;
+      clb_results CLOB;
+      str_line    VARCHAR2(4000);
+      
+   BEGIN
+   
+      SELECT 
+      a.text 
+      BULK COLLECT INTO ary_text
+      FROM 
+      all_source a 
+      WHERE 
+          a.owner = 'DZ_JENKINS'
+      AND a.type = p_object_type
+      AND a.name = p_object_name
+      ORDER BY
+      a.line;
+      
+      FOR i IN 1 .. ary_text.COUNT
+      LOOP
+          str_line := REGEXP_REPLACE(ary_text(i),p_find_text,p_replace_text);
+          str_line := REGEXP_REPLACE(str_line,'^' || p_object_type || ' ','CREATE OR REPLACE ' || p_object_type || ' ');
+          clb_results := clb_results || str_line;
+          
+      END LOOP;
+      
+      EXECUTE IMMEDIATE clb_results;
+      
+   END find_replace;
+
+BEGIN
+   
+   DBMS_UTILITY.compile_schema(schema => 'DZ_JENKINS');
+
+END;
+/
+                     </sqlCommand>
+                  </configuration>
+               </execution>                
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.2.1</version>
+            <executions>
+               <execution>
+                  <id>chmod_test_package</id>
+                  <phase>initialize</phase>
+                  <goals>
+                     <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                     <executable>chmod</executable>
+                     <arguments>
+                        <argument>755</argument>
+                        <argument>tfs/Packages/DZ_SDOTXT_TEST.pks</argument>
+                     </arguments>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>load_deployment</id>
+                  <phase>compile</phase>
+                  <goals>
+                     <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                     <executable>/u01/app/oracle/product/12.1.0/client_1/bin/sqlplus</executable>
+                     <environmentVariables>
+                        <ORACLE_HOME>/u01/app/oracle/product/12.1.0/client_1/</ORACLE_HOME>
+                        <PATH>$PATH:$ORACLE_HOME/bin:$JAVA_HOME/bin</PATH>
+                        <LD_LIBRARY_PATH>$LD_LIBRARY_PATH:$ORACLE_HOME/lib</LD_LIBRARY_PATH>
+                        <PATH>$PATH:$ORACLE_HOME/bin</PATH>
+                     </environmentVariables>
+                     <arguments>
+                        <argument>${dz.username}/${dz.password}@${dz.hoststring}</argument>
+                        <argument>@dz_sdotxt_deploy.sql</argument>
+                     </arguments>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>build_docs</id>
+                  <phase>compile</phase>
+                  <goals>
+                     <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                     <executable>ndocs/processor.ksh</executable>
+                     <arguments>
+                        <argument>sdotxt</argument>
+                     </arguments>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+</project>
+
