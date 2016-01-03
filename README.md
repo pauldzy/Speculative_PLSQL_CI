@@ -5,7 +5,7 @@ True database CI should involve a redeployment of the database and hosted data w
 
 A basic system diagram would be the following
 
-![PLSQL_CI_Flow](Resources/dz_plsql_ci.png)
+![PLSQL_CI_Flow](readme1.png)
 
 #####Revision Control System
 While my environment uses MS Team Foundation Server, essentially any RCS which your CI Server can poll for changes would work.  GitHub obviously would be a good choice.
