@@ -1,0 +1,24 @@
+WHENEVER SQLERROR EXIT -99;
+WHENEVER OSERROR  EXIT -98;
+SET DEFINE OFF;
+
+SHOW ERROR;
+
+DECLARE
+   l_num_errors PLS_INTEGER;
+
+BEGIN
+
+   l_num_errors := DZTESTERDZ.DZ_DZNAMEDZ_TEST.scratch_test();
+
+   IF l_num_errors <> 0
+   THEN
+      RAISE_APPLICATION_ERROR(-20001,'SCRATCH TEST ERROR');
+
+   END IF;
+
+END;
+/
+
+EXIT;
+
