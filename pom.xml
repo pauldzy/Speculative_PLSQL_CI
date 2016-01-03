@@ -23,6 +23,9 @@
    </pluginRepositories>
    <build>
       <plugins>
+         <!-- Properties plugin to allow Maven to read parameters from a properties file.
+              Used to stash away the Oracle database username, password and connection 
+              parameters.    -->
          <plugin>
            <groupId>org.codehaus.mojo</groupId>
            <artifactId>properties-maven-plugin</artifactId>
@@ -41,6 +44,8 @@
              </execution>
            </executions>
          </plugin>
+         <!-- Replacer plugin to swap in the build details into the test package
+              specification file.     -->
          <plugin>
             <groupId>com.google.code.maven-replacer-plugin</groupId>
             <artifactId>replacer</artifactId>
@@ -100,6 +105,8 @@
                </execution>
             </executions>
          </plugin>
+         <!-- Merge file plugin used to concatenate PLSQL components together
+              into the final deployment script.    -->
          <plugin>
             <groupId>croche.maven</groupId>
             <artifactId>maven-merge-file-plugin</artifactId>
@@ -155,6 +162,9 @@
                </execution>
             </executions>
          </plugin>
+         <!-- Plugin to run arbitrary Oracle sql statements.  Has limited
+              error checking capabilities which is why I use sqlplus
+              to compile and execute the final deployment script.  -->
          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>sql-maven-plugin</artifactId>
@@ -272,6 +282,8 @@ END;
                </execution>                
             </executions>
          </plugin>
+         <!-- Exec plugin to run system executables such
+              as sqlplus, NaturalDocs and wkhtml2pdf -->
          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
