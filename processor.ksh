@@ -1,5 +1,7 @@
 #!/bin/ksh
 
+# Shell script to run deployment script through Natural Docs and wkhtmltopdf
+
 # delete old doc to be sure
 rm -f dz_${1}_deploy.pdf
 
