@@ -27,7 +27,7 @@ The resulting HTML doc is then converted to PDF using [wkhtmltopdf](http://wkhtm
 
 ###Code Conventions and Restrictions
 * The pom.xml assembles the PLSQL code in the order necessary to compile without errors.  If your code throws errors due to circular compilation issues, well then you'd need a more robust manner to check compilation success.<br/>
-* 
+* My system assumes that each repository contains a test package having .inmemory_test and optionally .scratch_test functions.  You can set up your own tests as you like in the sqlfooter.sql static file.  
 
 ###Conclusions
-The above solution may appear rather cobbled together but basically works okay for me within the limitation listed above.  It may or may not suite your coding and/or workflow.  I would appreciate it if you drop me a line with any thoughts or suggestions you have.
+The above solution may appear rather cobbled together but basically works okay for me within the limitations listed above.  It may or may not suite your coding and/or workflow.  I would appreciate it if you drop me a line with any thoughts or suggestions you have.
