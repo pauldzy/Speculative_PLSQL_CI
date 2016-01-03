@@ -22,6 +22,23 @@
       </pluginRepository>
    </pluginRepositories>
    <build>
+      <!-- Maven follows a build convention based on phases which can be hard to follow.
+           This example has goals which execute in the following order:
+           A) initialize:
+              1) Load project properties using properties-maven-plugin.
+              2) Correct any file permissions issues related to checkout.
+           B) generate-sources
+              3) Run cleanup on scratch schema removing any preexisting module code. 
+           C) process-sources
+              4) Update test package header constants with TFS job and Jenkins build identifiers.
+              5) Concatenate together module files into deployment script.
+           D) process-resources
+              6) Update the deployment script with module name to allow tests to run and tidy
+                 any build and job id references. 
+           E) compile
+              7) Execute the deployment sql file in the test schema.
+              8) Run shell script to generate Natural Docs PDF documentation.
+      -->
       <plugins>
          <!-- Properties plugin to allow Maven to read parameters from a properties file.
               Used to stash away the Oracle database username, password and connection 
@@ -31,6 +48,10 @@
            <artifactId>properties-maven-plugin</artifactId>
            <version>1.0-alpha-2</version>
            <executions>
+             <!-- Step A.1
+                  Load project properties using properties-maven-plugin.
+                  In this example Oracle credentials are retrieved from the file referenced below.
+                  The format is simply parameter=value, e.g. dz.username=SCOTT     -->
              <execution>
                <phase>initialize</phase>
                <goals>
@@ -51,6 +72,8 @@
             <artifactId>replacer</artifactId>
             <version>1.5.2</version>
             <executions>
+               <!-- Step C.4
+                    Update the test package header with TFS job and Jenkins build identifiers.   -->
                <execution>
                   <id>foo1</id>
                   <phase>process-sources</phase>
@@ -79,6 +102,9 @@
                      </replacements>
                   </configuration>  
                </execution>
+               <!-- Step D.6
+                    Update the deployment script with module name to allow tests to run and tidy
+                    any build and job id references.   -->
                <execution>
                   <id>foo2</id>
                   <phase>process-resources</phase>
@@ -112,6 +138,8 @@
             <artifactId>maven-merge-file-plugin</artifactId>
             <version>0.4</version>
             <executions>
+               <!-- Step C.5
+                    Concatenate together module files into deployment script.   -->
                <execution>
                   <id>concatentate_deployment</id>
                   <phase>process-sources</phase>
@@ -185,6 +213,8 @@
                <delimiterType>row</delimiterType>
             </configuration>
             <executions>
+               <!-- Step B.3
+                    Run cleanup on scratch schema removing any preexisting module code. -->
                <execution>
                   <id>testing_setup</id>
                   <phase>generate-sources</phase>
@@ -289,6 +319,8 @@ END;
             <artifactId>exec-maven-plugin</artifactId>
             <version>1.2.1</version>
             <executions>
+               <!-- Step A.2
+                    Correct any file permissions issues related to checkout.   -->
                <execution>
                   <id>chmod_test_package</id>
                   <phase>initialize</phase>
@@ -303,6 +335,8 @@ END;
                      </arguments>
                   </configuration>
                </execution>
+               <!-- Step E.7
+                    Execute the deployment sql file in the test schema.  -->
                <execution>
                   <id>load_deployment</id>
                   <phase>compile</phase>
@@ -323,6 +357,8 @@ END;
                      </arguments>
                   </configuration>
                </execution>
+               <!-- Step E.8
+                    Run shell script to generate Natural Docs PDF documentation.  -->
                <execution>
                   <id>build_docs</id>
                   <phase>compile</phase>
