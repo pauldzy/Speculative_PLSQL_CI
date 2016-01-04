@@ -14,7 +14,7 @@ While my environment uses MS Team Foundation Server, essentially any RCS which y
 [Jenkins](https://jenkins-ci.org/) is my CI server of choice.   Jenkins provides the key abilities to poll the RCS for changes, extract those changes, launch a job, execute Maven, email build issues to owners and archive and provide statistics on build history over time.  
 
 #####Oracle Test Database
-Obviously doing PLSQL testing needs a database in which to test the code.  Your CI Server will need jdbc or OCI drivers in order to access the test database.  Currently I route some of my testing through sqlplus and thus my Jenkins server has an Oracle client installed.
+Obviously doing PLSQL testing needs a database in which to test the code.  Your CI Server will need jdbc or OCI drivers in order to access the test database.  See addedum #1 below for more information on how to add your ojdbc drivers to Maven.  Currently I route my testing through sqlplus and thus my Jenkins server has an Oracle client installed.  Testing database logic in utter isolation often is a bit pointless.  Perhaps your code does something with an Oracle spatial index for example.  Well unless you have some data to put that index upon, creating a test would involve generating sample data or such which is a task in itself.  My test database requires a schema of test data which itself is a repository source controlled and deployed by Jenkins - see [DZ_TEST_DATA](https://github.com/pauldzy/DZ_TESTDATA).
 
 #####Maven
 Most of the heavy lifting is done with Maven 3.  The CI Server job launches Maven using a custom project object model (pom.xml) file.  See a [sample pom.xml](/pom.xml) for how my tests run.  Maven results are recorded and success/failure tracked in the Jenkins job.
@@ -31,3 +31,8 @@ The resulting HTML doc is then converted to PDF using [wkhtmltopdf](http://wkhtm
 
 ###Conclusions
 The above solution may appear rather cobbled together but basically works okay for me within the limitations listed above.  It may or may not suite your coding and/or workflow.  I would appreciate it if you drop me a line with any thoughts or suggestions you have.
+
+###Addendum
+1. As Oracle ojdbc drivers are licensed by Oracle, Maven cannot just blindly download them.  However they should be part of your existing Oracle client installation.  To add to Maven, sudo as the Jenkins user and type<br/>mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc7 -Dversion=12.1.1 -Dpackaging=jar -Dfile=$ORACLE_HOME/jdbc/lib/ojdbc7.jar -DgeneratePom=true<br/>See [this link for more information](http://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository). 
+
+
