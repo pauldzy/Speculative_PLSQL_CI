@@ -251,65 +251,6 @@ END;
                      </sqlCommand>
                   </configuration>
                </execution>
-               <execution>
-                  <id>testing_adjustments</id>
-                  <phase>process-sources</phase>
-                  <goals>
-                     <goal>execute</goal>
-                  </goals>
-                  <configuration>
-                     <sqlCommand>
-DECLARE
-
-   num_changes NUMBER;
-
-   PROCEDURE find_replace(
-       p_object_name  IN  VARCHAR2
-      ,p_object_type  IN  VARCHAR2
-      ,p_find_text    IN  VARCHAR2
-      ,p_replace_text IN  VARCHAR2
-      ,p_replacements OUT NUMBER
-   )
-   AS
-      ary_text    MDSYS.SDO_STRING2_ARRAY;
-      clb_results CLOB;
-      str_line    VARCHAR2(4000);
-      
-   BEGIN
-   
-      SELECT 
-      a.text 
-      BULK COLLECT INTO ary_text
-      FROM 
-      all_source a 
-      WHERE 
-          a.owner = 'DZ_JENKINS'
-      AND a.type = p_object_type
-      AND a.name = p_object_name
-      ORDER BY
-      a.line;
-      
-      FOR i IN 1 .. ary_text.COUNT
-      LOOP
-          str_line := REGEXP_REPLACE(ary_text(i),p_find_text,p_replace_text);
-          str_line := REGEXP_REPLACE(str_line,'^' || p_object_type || ' ','CREATE OR REPLACE ' || p_object_type || ' ');
-          clb_results := clb_results || str_line;
-          
-      END LOOP;
-      
-      EXECUTE IMMEDIATE clb_results;
-      
-   END find_replace;
-
-BEGIN
-   
-   DBMS_UTILITY.compile_schema(schema => 'DZ_JENKINS');
-
-END;
-/
-                     </sqlCommand>
-                  </configuration>
-               </execution>                
             </executions>
          </plugin>
          <!-- Exec plugin to run system executables such
