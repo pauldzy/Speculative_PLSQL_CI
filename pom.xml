@@ -88,16 +88,16 @@
                            <value>C_TFS_CHANGESET CONSTANT NUMBER := ${TFS_CHANGESET};</value>
                         </replacement>
                         <replacement>
-                           <token>C_JENKINS_JOBNM CONSTANT VARCHAR2\(255\) := \'NULL\';</token>
-                           <value>C_JENKINS_JOBNM CONSTANT VARCHAR2(255) := '${JOB_NAME}';</value>
+                           <token>C_JENKINS_JOBNM CONSTANT VARCHAR2\(255 Char\) := \'NULL\';</token>
+                           <value>C_JENKINS_JOBNM CONSTANT VARCHAR2(255 Char) := '${JOB_NAME}';</value>
                         </replacement>
                         <replacement>
                            <token>C_JENKINS_BUILD CONSTANT NUMBER := 0.0;</token>
                            <value>C_JENKINS_BUILD CONSTANT NUMBER := ${BUILD_NUMBER};</value>
                         </replacement>
                         <replacement>
-                           <token>C_JENKINS_BLDID CONSTANT VARCHAR2\(255\) := \'NULL\';</token>
-                           <value>C_JENKINS_BLDID CONSTANT VARCHAR2(255) := '${BUILD_ID}';</value>
+                           <token>C_JENKINS_BLDID CONSTANT VARCHAR2\(255 Char\) := \'NULL\';</token>
+                           <value>C_JENKINS_BLDID CONSTANT VARCHAR2(255 Char) := '${BUILD_ID}';</value>
                         </replacement>                  
                      </replacements>
                   </configuration>  
