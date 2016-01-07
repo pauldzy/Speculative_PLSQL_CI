@@ -182,7 +182,12 @@
                               <include>DZ_SDOTXT_TEST.pkb</include>
                               <include>sqlplus_footer.sql</include>
                            </includes>
-                           <separator>\n--*************************--\nPROMPT #{file.name};\n\n</separator>
+                           <!-- The maven merge plugin is oblivious to line feed issues.
+                                If your source code is extracted with windows-style linefeeds
+                                you will need to force the separator to use /r/n as
+                                below.  Note that the separator string cannot start 
+                                with an escaped /r -->
+                           <separator>--&#xD;\n--*************************--&#xD;\nPROMPT #{file.name};&#xD;\n&#xD;\n</separator>
                            <encoding>UTF-8</encoding>
                         </merge>
                      </merges>
