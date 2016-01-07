@@ -149,6 +149,10 @@
                   <configuration>
                      <merges>
                         <merge>
+                           <!-- Note that merging uses the source files without any
+                                alterations.  Mixing linefeeds styles and UTF8 BOM
+                                markers may make running the concatenated file problematic
+                                depending on the sensistivity of the SQL client.   -->
                            <targetFile>dz_sdotxt_deploy.sql</targetFile>
                            <sourceDirs>
                               <sourceDir>/var/lib/jenkins/userContent</sourceDir>
